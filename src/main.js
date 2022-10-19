@@ -21,7 +21,7 @@ function setTypeCard(type) {
 }
 
 globalThis.setTypeCard = setTypeCard;
-setTypeCard("bradesco");
+
 
 //security code
 const securityCode = document.getElementById("security-code");
@@ -64,7 +64,7 @@ const cardNumberPattern = {
         },
         {
             mask:"0000 0000 0000 0000",
-            regex: "",
+            regex: /^(?:6011|65\d{0,2}|64[4-9]\d?)\d{0,12}/,
             cardtype: "nubank"
         },
         {
@@ -73,7 +73,7 @@ const cardNumberPattern = {
         },
         {
             mask:"0000 0000 0000 0000",
-            regex: "",
+            regex: /^(?:35\d{0,2})\d{0,12}/,
             cardtype: "bradesco"
         }
     ],
@@ -86,3 +86,54 @@ const cardNumberPattern = {
 }
 
 const cardNumberMasked = IMask(cardNumber, cardNumberPattern);
+
+// DOM do cartão
+
+const addButton = document.getElementById("add-button");
+addButton.addEventListener("click",()=>{
+    console.log("voce clicou")
+})
+
+const form = document.querySelector("form").addEventListener("submit",(event)=>{
+      event.preventDefault();
+})
+
+const titularName = document.getElementById("card-holder")
+titularName.addEventListener("input",()=>{
+    const ccHolder = document.querySelector(".cc-holder .value")
+
+    ccHolder.innerText = titularName.value.length === 0 ? "FULANO DA SILVA" : titularName.value
+    
+})
+
+securityCodeMasked.on("accept", ()=>{
+      updateSecurityCode(securityCodeMasked.value);
+})
+
+
+function updateSecurityCode(code){
+      const ccSecurity = document.querySelector(".cc-security .value")
+
+      ccSecurity.innerText = code.length === 0 ? "123" : code
+}
+
+cardNumberMasked.on("accept",()=>{
+    const cardType = cardNumberMasked.masked.currentMask.cardtype
+    setTypeCard(cardType)
+    updateCardNumber(cardNumberMasked.value)
+})
+
+function updateCardNumber(number){
+    const ccNumber = document.querySelector(".cc-number")
+
+    ccNumber.innerText = number.length === 0 ? "1234 5678 9012 3456" : number
+}
+
+expirationDateMasked.on("accept", ()=>{
+      updateExpirationDate(expirationDateMasked.value)
+})
+
+function updateExpirationDate(date){
+    const ccExpiration = document.querySelector(".cc-extra .value")
+    ccExpiration.innerText = date.length === 0 ? "02/32" : date
+}
